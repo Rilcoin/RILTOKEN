@@ -25,7 +25,9 @@ $ npm install -g truffle ethereumjs-testrpc
 # Install local node dependencies:
 $ npm install
 ```
-
+#### Bug Bounty
+Please read the instructions and submit the solution with the proper reasoning.
+https://docs.google.com/forms/d/1-BkiyWAbBxmKWlLBNud_KdXfrlJKWHHdoa9GV_zFz-o/edit
 
 
 [ril token]: https://rilcoin.io
