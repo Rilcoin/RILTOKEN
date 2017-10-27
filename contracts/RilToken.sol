@@ -1,8 +1,11 @@
 pragma solidity ^0.4.11;
- 
+
+/** @title Admined. */
 contract admined {
 	address public admin;
 
+     /** @dev Check for admined.
+      */
 	function admined(){
 		admin = msg.sender;
 	}
@@ -12,14 +15,17 @@ contract admined {
 		_;
 	}
 
+      /** @dev transfers the adminship.
+      * @param newAdmin.
+      */
 	function transferAdminship(address newAdmin) onlyAdmin {
 		admin = newAdmin;
 	}
 
 }
 
+/** @title Token */
 contract Token {
-
 	mapping (address => uint256) public balanceOf;
 	// balanceOf[address] = 5;
 	string public name;
@@ -47,6 +53,7 @@ contract Token {
 
 }
 
+/** @title AssetToken */
 contract AssetToken is admined, Token{
 
 	function AssetToken(uint256 initialSupply, string tokenName, string tokenSymbol, uint8 decimalUnits, address centralAdmin) Token (0, tokenName, tokenSymbol, decimalUnits ){
@@ -75,7 +82,6 @@ contract AssetToken is admined, Token{
 		balanceOf[_to] += _value;
 		Transfer(msg.sender, _to, _value);
 	}
-
 }
 
 
