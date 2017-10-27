@@ -29,6 +29,8 @@ $ npm install
 Please read the instructions and submit the solution with the proper reasoning.
 https://docs.google.com/forms/d/1-BkiyWAbBxmKWlLBNud_KdXfrlJKWHHdoa9GV_zFz-o/edit
 
+##### Issues please submit all the issues and make a pull request with the fix.
+https://github.com/Rilcoin/RILTOKEN/issues
 
 [ril token]: https://rilcoin.io
 [ethereum]: https://www.ethereum.org/
