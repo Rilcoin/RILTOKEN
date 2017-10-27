@@ -4,7 +4,7 @@ pragma solidity ^0.4.11;
 contract admined {
 	address public admin;
 
-     /** @dev Check for admined.
+     /* @dev Check for admined.
       */
 	function admined(){
 		admin = msg.sender;
@@ -15,8 +15,8 @@ contract admined {
 		_;
 	}
 
-      /** @dev transfers the adminship.
-      * @param newAdmin.
+      /*  @dev transfers the adminship.
+      *   @param newAdmin.
       */
 	function transferAdminship(address newAdmin) onlyAdmin {
 		admin = newAdmin;
@@ -24,13 +24,13 @@ contract admined {
 
 }
 
-/** @title Token */
+/* @title Token */
 contract Token {
 	mapping (address => uint256) public balanceOf;
 	// balanceOf[address] = 5;
 	string public name;
 	string public symbol;
-	uint8 public decimal; 
+	uint8 public decimal;
 	uint256 public totalSupply;
 	event Transfer(address indexed from, address indexed to, uint256 value);
 
@@ -53,7 +53,7 @@ contract Token {
 
 }
 
-/** @title AssetToken */
+/* @title AssetToken */
 contract AssetToken is admined, Token{
 
 	function AssetToken(uint256 initialSupply, string tokenName, string tokenSymbol, uint8 decimalUnits, address centralAdmin) Token (0, tokenName, tokenSymbol, decimalUnits ){
