@@ -1,58 +1,60 @@
+
+
 pragma solidity ^0.4.11;
 
 contract token { function transfer(address receiver, uint amount);
-                 function mintToken(address target, uint mintedAmount);
-                }
+    function mintToken(address target, uint mintedAmount);
+}
 
 contract CrowdSale {
     enum State {
-        Fundraising,
-        Failed,
-        Successful,
-        Closed
+    Fundraising,
+    Failed,
+    Successful,
+    Closed
     }
     State public state = State.Fundraising;
 
     struct Contribution {
-        uint amount;
-        address contributor;
+    uint amount;
+    address contributor;
     }
     Contribution[] contributions;
 
-    
-    
+
+
     uint public totalRaised;
     uint public currentBalance;
     uint public deadline;
     uint public completedAt;
     uint public priceInWei;
-    uint public fundingMinimumTargetInWei; 
-    uint public fundingMaximumTargetInWei; 
+    uint public fundingMinimumTargetInWei;
+    uint public fundingMaximumTargetInWei;
     token public tokenReward;
     address public creator;
-    address public beneficiary; 
+    address public beneficiary;
     string campaignUrl;
     uint constant version = 1;
 
 
     event LogFundingReceived(address addr, uint amount, uint currentTotal);
     event LogWinnerPaid(address winnerAddress);
-    event LogFundingSuccessful(uint totalRaised);
+    event LogFundingSuccessful(uint _totalRaised);
     event LogFunderInitialized(
-        address creator,
-        address beneficiary,
-        string url,
-        uint _fundingMaximumTargetInEther,
-        uint256 deadline);
+    address _creator,
+    address _beneficiary,
+    string url,
+    uint _fundingMaximumTargetInEther,
+    uint256 _deadline);
 
 
     modifier inState(State _state) {
         require(state == _state);
         // if (state != _state) throw;
-         _;
+        _;
     }
 
-     modifier isMinimum() {
+    modifier isMinimum() {
         require(msg.value >= priceInWei);
         // if(msg.value < priceInWei) throw;
         _;
@@ -81,13 +83,13 @@ contract CrowdSale {
 
 
     function CrowdSale(
-        uint _timeInMinutesForFundraising,
-        string _campaignUrl,
-        address _ifSuccessfulSendTo,
-        uint _fundingMinimumTargetInEther,
-        uint _fundingMaximumTargetInEther,
-        token _addressOfTokenUsedAsReward,
-        uint _etherCostOfEachToken)
+    uint _timeInMinutesForFundraising,
+    string _campaignUrl,
+    address _ifSuccessfulSendTo,
+    uint _fundingMinimumTargetInEther,
+    uint _fundingMaximumTargetInEther,
+    token _addressOfTokenUsedAsReward,
+    uint _etherCostOfEachToken)
     {
         creator = msg.sender;
         beneficiary = _ifSuccessfulSendTo;
@@ -99,11 +101,11 @@ contract CrowdSale {
         tokenReward = token(_addressOfTokenUsedAsReward);
         priceInWei = _etherCostOfEachToken * 1 ether;
         LogFunderInitialized(
-            creator,
-            beneficiary,
-            campaignUrl,
-            fundingMaximumTargetInWei,
-            deadline);
+        creator,
+        beneficiary,
+        campaignUrl,
+        fundingMaximumTargetInWei,
+        deadline);
     }
 
     function contribute()
@@ -114,11 +116,11 @@ contract CrowdSale {
 
 
         contributions.push(
-            Contribution({
-                amount: msg.value,
-                contributor: msg.sender
-                })
-            );
+        Contribution({
+        amount: msg.value,
+        contributor: msg.sender
+        })
+        );
 
         totalRaised += msg.value;
         currentBalance = totalRaised;
@@ -126,7 +128,7 @@ contract CrowdSale {
 
         if(fundingMaximumTargetInWei != 0){
 
-            tokenReward.transfer(msg.sender, amountInWei / priceInWei);
+            tokenReward.transfer(msg.sender, amountInWei  / priceInWei);
         }
         else{
             tokenReward.mintToken(msg.sender, amountInWei / priceInWei);
@@ -149,68 +151,68 @@ contract CrowdSale {
             payOut();
             completedAt = now;
 
-            } else if ( now > deadline )  {
-                if(totalRaised >= fundingMinimumTargetInWei){
-                    state = State.Successful;
-                    LogFundingSuccessful(totalRaised);
-                    payOut();
-                    completedAt = now;
-                }
-                else{
-                    state = State.Failed;
-                    completedAt = now;
-                }
+        } else if ( now > deadline )  {
+            if(totalRaised >= fundingMinimumTargetInWei){
+                state = State.Successful;
+                LogFundingSuccessful(totalRaised);
+                payOut();
+                completedAt = now;
             }
+            else{
+                state = State.Failed;
+                completedAt = now;
+            }
+        }
 
     }
 
-        function payOut()
-        public
-        inState(State.Successful)
-        {
+    function payOut()
+    public
+    inState(State.Successful)
+    {
 
-            // if(!beneficiary.send(this.balance)) {
-            //     throw;
-            // }
-            require(beneficiary.send(this.balance));
-            state = State.Closed;
-            currentBalance = 0;
-            LogWinnerPaid(beneficiary);
-        }
+        // if(!beneficiary.send(this.balance)) {
+        //     throw;
+        // }
+        require(beneficiary.send(this.balance));
+        state = State.Closed;
+        currentBalance = 0;
+        LogWinnerPaid(beneficiary);
+    }
 
-        function getRefund()
-        public
-        inState(State.Failed)
-        returns (bool)
+    function getRefund()
+    public
+    inState(State.Failed)
+    returns (bool)
+    {
+        for(uint i=0; i<=contributions.length; i++)
         {
-            for(uint i=0; i<=contributions.length; i++)
-            {
-                if(contributions[i].contributor == msg.sender){
-                    uint amountToRefund = contributions[i].amount;
-                    contributions[i].amount = 0;
-                    if(!contributions[i].contributor.send(amountToRefund)) {
-                        contributions[i].amount = amountToRefund;
-                        return false;
-                    }
-                    else{
-                        totalRaised -= amountToRefund;
-                        currentBalance = totalRaised;
-                    }
-                    return true;
+            if(contributions[i].contributor == msg.sender){
+                uint amountToRefund = contributions[i].amount;
+                contributions[i].amount = 0;
+                if(!contributions[i].contributor.send(amountToRefund)) {
+                    contributions[i].amount = amountToRefund;
+                    return false;
                 }
+                else{
+                    totalRaised -= amountToRefund;
+                    currentBalance = totalRaised;
+                }
+                return true;
             }
-            return false;
         }
+        return false;
+    }
 
-        function removeContract()
-        public
-        isCreator()
-        atEndOfLifecycle()
-        {
-            selfdestruct(msg.sender);
+    function removeContract()
+    public
+    isCreator()
+    atEndOfLifecycle()
+    {
+        selfdestruct(msg.sender);
 
-        }
+    }
 
-        function () { revert(); }
+    function () { revert(); }
 }
 
